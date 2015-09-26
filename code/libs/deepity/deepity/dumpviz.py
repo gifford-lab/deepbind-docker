@@ -61,7 +61,8 @@ import matplotlib
 matplotlib.rcParams.update({'font.size': 9, 
                             'font.family': 'sans serif', 
                             'text.usetex' : False,
-                            'figure.max_num_figures' : 100})
+                            # 'figure.max_num_figures' : 100
+                        })
 if (not os.environ.has_key("DISPLAY")) and (not os.environ.has_key("HOMEDRIVE")):
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
