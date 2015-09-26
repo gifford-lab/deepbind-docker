@@ -43,9 +43,18 @@ machines with three GPUs):
 
 This will launch the ENCODE example script referred to in their documentation.
 
+### Notes
+
 The DeepBind pipeline currently has a nest of hardcoded paths for
 loading data, but we will clean this up soon and add examples for
 analyzing custom files with the container.
+
+You can override the default `CMD` and then start other commands
+manually:
+
+    docker run -it --rm $NVIDIA_OPTS giffordlab/deepbind-docker /bin/bash
+
+### License
 
 The original code is copyright (c) 2015, Andrew Delong and Babak
 Alipanahi, all rights reserved.  The following license agreement and
