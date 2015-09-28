@@ -1,4 +1,5 @@
 FROM kaixhin/cuda-caffe:6.5
+MAINTAINER Matt Edwards <matted@mit.edu>
 
 RUN apt-get update
 RUN apt-get install -y emacs24-nox nano curl
