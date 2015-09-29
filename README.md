@@ -21,10 +21,14 @@ EC2 ones, by running:
 
     docker pull giffordlab/deepbind-docker
 
-Prerequisites are Docker and having the NVIDIA 346.46 driver installed
-(see the upstream image documentation).  We should be able to switch
-to CUDA 7.0 or 7.5 easily in the future, just by changing the first
-line in the Dockerfile.
+Prerequisites are Docker and having the NVIDIA 340.29 driver installed
+(the default for CUDA 6.5; see the upstream image documentation).  The
+`dockerfiles` directory contains images that change the CUDA version
+and should allow compatibility with a wider range of driver backends.
+They are also set up as automated builds with tags specifying the CUDA
+and driver version, including `7.5`, `7.0`, `6.5`, `6.5_340.58`, and
+`6.5_340.29` (see
+[here](https://hub.docker.com/r/giffordlab/deepbind-docker/tags/)).
 
 ### Using the image
 
