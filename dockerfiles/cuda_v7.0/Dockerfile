@@ -15,3 +15,11 @@ RUN cd /tmp && \
   ./cuda-linux64-rel-*.run -noprompt && \
 # Clean up
   rm -rf *
+
+# (Re-)build the DeepBind binaries.
+RUN make --directory /root/deepbind/libs/smat/src clean
+RUN make --directory /root/deepbind/libs/smat/src
+RUN make --directory /root/deepbind/libs/deepity/deepity_smat clean
+RUN make --directory /root/deepbind/libs/deepity/deepity_smat
+RUN make --directory /root/deepbind/libs/kangaroo/kangaroo_smat clean
+RUN make --directory /root/deepbind/libs/kangaroo/kangaroo_smat
