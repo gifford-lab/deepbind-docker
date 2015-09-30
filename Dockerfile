@@ -1,4 +1,4 @@
-FROM kaixhin/cuda-caffe:latest
+FROM kaixhin/cuda-caffe:7.0
 MAINTAINER Matt Edwards <matted@mit.edu>
 
 RUN apt-get update
