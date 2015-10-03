@@ -383,7 +383,7 @@ def unpack_model(pklfile, args):
                 fimgs.zoom_smooth(4*zoom)
                 fimgs.zoom_smooth(0.5)
             #fimgs.zoom(max(1,24//fimgs.images.shape[1]))
-            scipy.misc.imsave(outdir+"/"+name+".color.png",image_grid(fimgs, cmap=gridimg_pal, fade=True))
+            #scipy.misc.imsave(outdir+"/"+name+".color.png",image_grid(fimgs, cmap=gridimg_pal, fade=True))
 
             # Save black and white filters
             if args.greyscale:
@@ -392,7 +392,7 @@ def unpack_model(pklfile, args):
                     fimgs.zoom(max(1,48//fimgs.images.shape[1]))
                 else:
                     fimgs.zoom(max(1,24//fimgs.images.shape[1]))
-                scipy.misc.imsave(outdir+"/"+name+".grey.png",image_grid(fimgs, fade=True))
+                #scipy.misc.imsave(outdir+"/"+name+".grey.png",image_grid(fimgs, fade=True))
 
             logoheight, letterwd = 41, 6
 
@@ -409,7 +409,7 @@ def unpack_model(pklfile, args):
             #revlogo = image_grid(revlogo, fade=True)
             fwdtitle = Image.fromarray(255*np.ones((20,fwdlogo.shape[1],3),np.uint8)); ImageDraw.Draw(fwdtitle).text((20,2),"actual",(0,0,0),font=_image_grid_font)
             #revtitle = Image.fromarray(255*np.ones((20,revlogo.shape[1],3),np.uint8)); ImageDraw.Draw(revtitle).text((20,2),"reverse complement",(0,0,0),font=_image_grid_font)
-            scipy.misc.imsave(outdir+"/"+name+".logo.png", fwdlogo)
+            #scipy.misc.imsave(outdir+"/"+name+".logo.png", fwdlogo)
             #scipy.misc.imsave(outdir+"/"+name+".logo.png", np.hstack([np.vstack([np.array(fwdtitle), fwdlogo]), np.vstack([np.array(revtitle), revlogo])]))
 
         else:
