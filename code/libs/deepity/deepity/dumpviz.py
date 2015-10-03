@@ -416,7 +416,7 @@ def unpack_model(pklfile, args):
             # Save colourized weight maps
             fimgs = filter_images(weights, per_image_scale=False)
             fimgs.zoom(max(1,12//fimgs.images.shape[1]))
-            scipy.misc.imsave(outdir+"/"+name+".png",image_grid(fimgs, cmap=gridimg_pal))
+            #scipy.misc.imsave(outdir+"/"+name+".png",image_grid(fimgs, cmap=gridimg_pal))
 
 
 def save_predict_plot(args, filename, targetname, y, z):
