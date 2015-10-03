@@ -48,7 +48,7 @@ import shutil
 # Warning: The multiprocessing module may be used indirectly, so do not put any 
 # unintentional statements outside of main().
 
-datadir = "../data/encode"
+#datadir = "../data/encode"
 seq_suffix = ".seq.gz"
 
 def main():
@@ -84,7 +84,7 @@ def main():
 #########################################################################
 
 def load_tfids(args):
-    targetnames = sorted([filename.replace("_AC"+seq_suffix,"") for filename in os.listdir(datadir) if filename.endswith("_AC"+seq_suffix)])
+    targetnames = sorted([filename.replace("_AC"+seq_suffix,"") for filename in os.listdir(args.indir) if filename.endswith("_AC"+seq_suffix)])
     chunktargets = util.getchunktargets(args, targetnames)
     return chunktargets
 
@@ -117,7 +117,7 @@ def load_traindata(tfid, args):
     print "load_traindata: %s"%tfid
     maxrows = 10000 if args.quick else None
     minrows = 100000
-    trdata = util.load_seq("%s/%s_AC%s" % (datadir,tfid,seq_suffix), minrows=minrows, maxrows=maxrows)
+    trdata = util.load_seq("%s/%s_AC%s" % (args.indir,tfid,seq_suffix), minrows=minrows, maxrows=maxrows)
     trdata.targetnames = [tfid]
     if args.mode == "top":
         trdata = trdata[:500] # Only top 500 even peaks (A); top 500 odd (B) are stored in the corresponding _B.seq.gz file
@@ -132,16 +132,16 @@ def load_traindata(tfid, args):
 def load_testdata(tedata, tfids, args):
     if tedata is not None:
         return tedata
-    if "encode" in datadir:
+    if "encode" in args.indir:
         maxrows = 10000
-    elif "chip" in datadir:
+    elif "chip" in args.indir:
         maxrows = 10000
     else:
         maxrows = None
     all_tedata = {}
     for tfid in tfids:
         print "load_testdata: %s ..."%tfid,
-        tedata = util.load_seq("%s/%s_B%s" % (datadir,tfid,seq_suffix), minrows=10000, maxrows=maxrows)
+        tedata = util.load_seq("%s/%s_B%s" % (args.indir,tfid,seq_suffix), minrows=10000, maxrows=maxrows)
         tedata.targetnames = [tfid]
         all_tedata[tfid] = tedata
         print "done"
