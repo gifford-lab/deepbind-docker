@@ -17,7 +17,7 @@ CFLAGS    := -m64 -fPIC -fvisibility=hidden \
              --param max-inline-recursive-depth=24 --param max-inline-recursive-depth-auto=24
 CXXFLAGS  := 
 CXX11FLAGS:= -std=gnu++11
-NVCCFLAGS := -use_fast_math -gencode arch=compute_35,code=sm_35 -include nvcc_preinclude.h -maxrregcount 64
+NVCCFLAGS := -use_fast_math -gencode arch=compute_30,code=sm_30 -include nvcc_preinclude.h -maxrregcount 64
 
 LDFLAGS   := -shared -shared-libgcc -Bsymbolic -fvisibility=hidden -Wl,-rpath,'$$ORIGIN' -Wl,--no-undefined -Wl,--export-dynamic
 DEFINES   := 
