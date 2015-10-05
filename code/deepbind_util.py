@@ -455,6 +455,7 @@ def parseargs(appname, args, shorthandids=None):
     args.add_argument("-d","--device", type=str, default="0", help="GPUs permitted to use, e.g. \"0,1,2\". Default is \"0\".")
     args.add_argument("-c","--chunk", type=str, default=None, help="For spreading job across multiple workstations. Saying \"2/3\" divides the work into 3 chunks and makes this process responsible for the second chunk.")
     args.add_argument("-q","--quick", action="store_true", default=False, help="Quick mode. Only trains/tests a few models, and only on a subset of the data rows.")
+    args.add_argument("-f","--fast", action="store_true", default=False, help="Quick mode. Only trains/tests a few models, and only on a subset of the data rows.")
     args.add_argument("-o","--outdir", type=str, default='../out', help="Outputdir")
     args.add_argument("-i","--indir", type=str, default='../data/encode', help="Inputdir")
     args = args.parse_args()
@@ -482,6 +483,10 @@ def parseargs(appname, args, shorthandids=None):
     args.nfold  = 2  if args.quick else 3
     args.ncalib = 3  if args.quick else 30
     args.ntrial = 2  if args.quick else 6
+    if args.fast:
+    	args.nfold  = 2
+    	args.ncalib = 3
+    	args.ntrial = 2
 
     args.id = list(set(args.id))
     return args
