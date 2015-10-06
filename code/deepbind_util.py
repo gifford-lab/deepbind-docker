@@ -1,19 +1,19 @@
 # Copyright (c) 2015, Andrew Delong and Babak Alipanahi All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-# 
+#
 # 1. Redistributions of source code must retain the above copyright notice, this
 # list of conditions and the following disclaimer.
-# 
+#
 # 2. Redistributions in binary form must reproduce the above copyright notice,
 # this list of conditions and the following disclaimer in the documentation and/or
 # other materials provided with the distribution.
-# 
+#
 # 3. Neither the name of the copyright holder nor the names of its contributors
 # may be used to endorse or promote products derived from this software without
 # specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,14 +24,14 @@
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# 
-# Author's note: 
-#     This file was distributed as part of the Nature Biotechnology 
+#
+# Author's note:
+#     This file was distributed as part of the Nature Biotechnology
 #     supplementary software release for DeepBind. Users of DeepBind
-#     are encouraged to instead use the latest source code and binaries 
+#     are encouraged to instead use the latest source code and binaries
 #     for scoring sequences at
 #        http://tools.genes.toronto.edu/deepbind/
-# 
+#
 import sys
 import os
 import re
@@ -78,20 +78,20 @@ def set_devices(devices):
 
 def ord2mask_b(x):
     """
-    Convert a vector of length N with integral values in range {0,1,2,3} 
-    into an Nx4 numpy array, where for example "2" is represented by 
+    Convert a vector of length N with integral values in range {0,1,2,3}
+    into an Nx4 numpy array, where for example "2" is represented by
     row [0,0,1,0].
-    """    
+    """
     mask = np.zeros((x.size,4))
     for i in range(x.size):
         if   x[0,i] <= 3:
             mask[i,x[0,i]] = 1
-        elif x[0,i] == 255:     
+        elif x[0,i] == 255:
             mask[i,:] = 0.25*np.ones((4,))
     return mask
 
 def compute_pfms(data, filter_len=20, num_permut=1000, rev_comp=True):
-    nf, num = data.shape    
+    nf, num = data.shape
     pfms = [0.0001*np.ones((filter_len,4)) for i in range(nf)]
     counts = [0 for _ in range(nf)]
     for i in xrange(num):
@@ -113,14 +113,14 @@ def compute_pfms(data, filter_len=20, num_permut=1000, rev_comp=True):
         ic[j] = np.sum(info[:,j].ravel())
         pfm_st, pfm_sp = trim_pfm(info[:,j].ravel())
         pfms[j] = pfms[j][pfm_st:pfm_sp,:]
-        
+
         ic[j] = 0
-        for k in range(pfms[j].shape[0]):            
-            ic[j] +=  2 + np.sum(pfms[j][k,:] * np.log2(pfms[j][k,:]))         
+        for k in range(pfms[j].shape[0]):
+            ic[j] +=  2 + np.sum(pfms[j][k,:] * np.log2(pfms[j][k,:]))
     kl_dist, pval = pfm_kl_dist(pfms, ic, num_permut, rev_comp)
     return pfms, ic, kl_dist, pval, counts + [num]
 
-def trim_pfm(info):        
+def trim_pfm(info):
     max_ic = np.max(info)
     ic_threshold = np.max([0.1*max_ic, 0.1]);
     w = info.shape[0]
@@ -131,12 +131,12 @@ def trim_pfm(info):
             pfm_st += 1
         else:
             break
-    for inf in reversed(info):    
-        if inf < ic_threshold:            
-            pfm_sp -= 1            
+    for inf in reversed(info):
+        if inf < ic_threshold:
+            pfm_sp -= 1
         else:
             break
-    return pfm_st, pfm_sp  
+    return pfm_st, pfm_sp
 
 def rev_com_mask(p):
     q = p.copy()
@@ -146,13 +146,13 @@ def rev_com_mask(p):
 
 def kldist(p, q):
     return np.sum(p*np.log(p/q))
-    
+
     #r, c = p.shape
     #kl = 0
     #for i in range(r):
     #    for j in range(c):
     #        kl += p[i,j]*np.log(p[i,j]/q[i,j])
-    #return kl      
+    #return kl
 
 def compute_kl(p, q):
     lp = p.shape[0]
@@ -164,7 +164,7 @@ def compute_kl(p, q):
         tq = q[k:k+lp,:]
         tkl = kldist(p, tq)
         if tkl < dist:
-            dist = tkl            
+            dist = tkl
     return dist/lp
 
 def pfm_kl_dist(pfms, ic, num_permut, rev_comp):
@@ -174,7 +174,7 @@ def pfm_kl_dist(pfms, ic, num_permut, rev_comp):
     for i,vp in enumerate(pfms):
         for j,vq in enumerate(pfms):
             p = vp.copy()
-            q = vq.copy()          
+            q = vq.copy()
             if j <= i:
                 continue
             if ic[i] * ic[j] == 0:
@@ -189,7 +189,7 @@ def pfm_kl_dist(pfms, ic, num_permut, rev_comp):
                 rev_dist = compute_kl(p, q_rev_com)
                 if rev_dist < dist[i,j]:
                     dist[i,j] = rev_dist
-            if num_permut > 0:          
+            if num_permut > 0:
                 for _ in range(num_permut):
                     tp = p.copy()
                     p_row = np.random.permutation(tp.shape[0])
@@ -201,9 +201,9 @@ def pfm_kl_dist(pfms, ic, num_permut, rev_comp):
                     else:
                         p_dist = compute_kl(tp, q)
                     if p_dist <= dist[i,j]:
-                        pval[i,j] += 1             
+                        pval[i,j] += 1
                 pval[i,j] /= num_permut
-                pval[j,i] = pval[i,j]   
+                pval[j,i] = pval[i,j]
             dist[j,i] = dist[i,j]
     return dist, pval
 
@@ -212,7 +212,7 @@ def pfm_kl_dist(pfms, ic, num_permut, rev_comp):
 
 
 # This implementation is based on Altschul and Erickson's Algorithm
-# for shuffling a sequence while preserving the doublet frequency 
+# for shuffling a sequence while preserving the doublet frequency
 # Babak Alipanahi
 # Jan 24, 2014
 # University of Toronto
@@ -220,10 +220,10 @@ def pfm_kl_dist(pfms, ic, num_permut, rev_comp):
 # form the graph from sequence
 def form_seq_graph(seq):
     graph = {}
-    for i, s in enumerate(seq[:-1]):        
+    for i, s in enumerate(seq[:-1]):
         if s not in graph:
             graph[s] = []
-        graph[s].append(seq[i+1])     
+        graph[s].append(seq[i+1])
     return graph
 
 # sample a random last edge graph
@@ -233,7 +233,7 @@ def sample_le_graph(graph, last_nt):
         le_graph[vx] = []
         if vx not in last_nt:
             le_graph[vx].append(random.choice(graph[vx]))
-    return le_graph        
+    return le_graph
 
 # check whether there exists an Eulerian walk
 # from seq[0] to seq[-1] in the shuffled
@@ -243,10 +243,10 @@ def check_le_graph(le_graph, last_nt):
         if vx not in last_nt:
             if not find_path(le_graph, vx, last_nt):
                 return False
-    return True            
+    return True
 
 # function from: http://www.python.org/doc/essays/graphs/
-# check whether there is a path between two nodes in a 
+# check whether there is a path between two nodes in a
 # graph
 def find_path(graph, start, end, path=[]):
     path = path + [start]
@@ -258,10 +258,10 @@ def find_path(graph, start, end, path=[]):
         if node not in path:
             newpath = find_path(graph, node, end, path)
             if newpath: return newpath
-        return None       
-        
+        return None
+
 # generate a new seq graph based on the last edge graph
-# while randomly permuting all other edges        
+# while randomly permuting all other edges
 def form_new_graph(graph, le_graph, last_nt):
     new_graph = {}
     for vx in graph:
@@ -269,15 +269,15 @@ def form_new_graph(graph, le_graph, last_nt):
         temp_edges = graph[vx]
         if vx not in last_nt:
             temp_edges.remove(le_graph[vx][0])
-        random.shuffle(temp_edges)        
+        random.shuffle(temp_edges)
         for ux in temp_edges:
             new_graph[vx].append(ux)
-        if vx not in last_nt:    
+        if vx not in last_nt:
             new_graph[vx].append(le_graph[vx][0])
-    return new_graph                     
-      
+    return new_graph
+
 # walk through the shuffled graph and make the
-# new sequence       
+# new sequence
 def form_shuffled_seq(new_graph, init_nt, len_seq):
     is_done = False
     new_seq = init_nt
@@ -287,7 +287,7 @@ def form_shuffled_seq(new_graph, init_nt, len_seq):
         new_graph[last_nt].pop(0)
         if len(new_seq) >= len_seq:
             is_done = True
-    return new_seq    
+    return new_seq
 
 # verify the nucl
 def verify_counts(seq, shuf_seq):
@@ -298,9 +298,9 @@ def verify_counts(seq, shuf_seq):
         for tk in itert.product('ACGTN', repeat=k):
             tkey = ''.join(i for i in tk)
             kmers[tkey] = [0,0]
-                        
+
     kmers[seq[0]][0] = 1
-    kmers[shuf_seq[0]][1] = 1      
+    kmers[shuf_seq[0]][1] = 1
     for k in kmer_range:
         for l in range(len(seq)-k+1):
             tkey = seq[l:l+k]
@@ -309,7 +309,7 @@ def verify_counts(seq, shuf_seq):
             kmers[tkey][1] += 1
     for tk in kmers:
         if kmers[tk][0] != kmers[tk][1]:
-            return False    
+            return False
     return True
 
 _preprocess_seq = ['N']*256;
@@ -319,9 +319,9 @@ _preprocess_seq[ord('g')] = _preprocess_seq[ord('G')] = 'G';  # Map G => G
 _preprocess_seq[ord('t')] = _preprocess_seq[ord('T')] = 'T';  # Map T => T
 _preprocess_seq[ord('u')] = _preprocess_seq[ord('U')] = 'T';  # Map U => T
 _preprocess_seq = "".join(_preprocess_seq)
-            
+
 def preprocess_seq(seq):
-    return seq.translate(_preprocess_seq) 
+    return seq.translate(_preprocess_seq)
 
 def doublet_shuffle(seq, verify=False):
     seq = preprocess_seq(seq)
@@ -458,6 +458,10 @@ def parseargs(appname, args, shorthandids=None):
     args.add_argument("-f","--fast", action="store_true", default=False, help="Quick mode. Only trains/tests a few models, and only on a subset of the data rows.")
     args.add_argument("-o","--outdir", type=str, default='../out', help="Outputdir")
     args.add_argument("-i","--indir", type=str, default='../data/encode', help="Inputdir")
+    args.add_argument("--nfold_c", type=int, default=2, help="Inputdir")
+    args.add_argument("--ncalib_c", type=int, default=10, help="Inputdir")
+    args.add_argument("--ntrial_c", type=int, default=6, help="Inputdir")
+
     args = args.parse_args()
 
     if args.steps == "all":
@@ -468,7 +472,7 @@ def parseargs(appname, args, shorthandids=None):
     args.outdir = args.outdir + '/'
     args.device = [int(id) for id in args.device.split(",")]
     kangaroo.globals.set_devices(args.device)
-    
+
     args.calibdir  = args.outdir+"/calib"
     args.finaldir  = args.outdir+"/final"
     args.reportdir = args.outdir+"/report"
@@ -484,9 +488,9 @@ def parseargs(appname, args, shorthandids=None):
     args.ncalib = 3  if args.quick else 30
     args.ntrial = 2  if args.quick else 6
     if args.fast:
-    	args.nfold  = 2
-    	args.ncalib = 3
-    	args.ntrial = 2
+        args.nfold  = args.nfold_c
+        args.ncalib = args.ncalib_c
+        args.ntrial = args.ntrial_c
 
     args.id = list(set(args.id))
     return args
@@ -579,13 +583,13 @@ def save_metrics(data, groupname, outdir, modeldir=None):
                 nunique = float(len(top_unique))
                 percent_repeat = 100*(nall - nunique) / nall
                 print "  top %.4f%% (n=%d)\t=> %.2f%% repeats"  % (100./denom, nall, percent_repeat)
-                
+
 
 
 def _update_metrics(outdir, targetname, groupname, rowidx, z, y, aucthresh=(.5,.5)):
     modeldir = outdir+"/"+targetname
 
-    # Load current predictions 
+    # Load current predictions
     with np.load(modeldir+"/predict.npz") as f:
         predict_npz = { name : f[name] for name in f.keys() }
 
@@ -687,7 +691,7 @@ def save_featuremaps(data, modeldir, outdir, maxrows=1000000):
         print "done"
 
         #np.savez_compressed(outdir + "/%s.pfm_info.npz"%(name), pfmargs=pfmargs)
-        
+
 
         # Compute PFMs from the pfmargs array
         print "Computing PFMs for %s..." % name,
@@ -807,7 +811,7 @@ def load_seq(filename, minrows=None, maxrows=None, padsize=None):
     if maxrows:
         minrows = min(maxrows, minrows)
     data = datasource.fromtxt(filename, None, None, maxrows=maxrows)
-    
+
     # Duplicate all the data as many times as needed to provide a match
     # for each background sequence
     if minrows:
