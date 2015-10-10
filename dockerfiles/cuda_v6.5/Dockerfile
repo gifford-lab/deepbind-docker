@@ -12,7 +12,7 @@ ENV PATH /root/miniconda/bin:$PATH
 RUN conda install scipy numpy matplotlib pil # matplotlib=1.3.1 downgrades everything
 
 # Bring DeepBind source code into the image.
-COPY code/libs /root/deepbind/libs
+COPY ../code/libs /root/deepbind/libs
 
 # Build the DeepBind binaries.
 RUN make --directory /root/deepbind/libs/smat/src clean
@@ -25,9 +25,9 @@ RUN make --directory /root/deepbind/libs/kangaroo/kangaroo_smat
 ENV LD_LIBRARY_PATH /root/deepbind/libs/deepity/build/release/bin:/root/deepbind/libs/smat/build/release/bin:/root/deepbind/libs/kangaroo/build/release/bin:$LD_LIBRARY_PATH
 
 # Bring in DeepBind data and scripts.
-COPY code/*py /root/deepbind/
-COPY code/cfg /root/deepbind/cfg
-COPY data /root/data
+COPY ../code/*py /root/deepbind/
+COPY ../code/cfg /root/deepbind/cfg
+COPY ../data /root/data
 
 WORKDIR /root/deepbind
 
