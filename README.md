@@ -26,14 +26,13 @@ Prerequisites are Docker and having the NVIDIA 346.46 driver installed
 `dockerfiles` directory contains images that change the CUDA version
 and should allow compatibility with a wider range of driver backends.
 They are also set up as automated builds with tags specifying the CUDA
-and driver version, including `7.5`, `7.0`, `6.5`, `6.5_340.58`, and
-`6.5_340.29` (see
+and driver version, including `7.5`, `7.0`, and `6.5` (see
 [here](https://hub.docker.com/r/giffordlab/deepbind-docker/tags/)).
 
 ### Using the image
 
 The image is based on this [CUDA
-image](https://github.com/Kaixhin/dockerfiles/tree/master/cuda/cuda_v6.5).
+image](https://github.com/Kaixhin/dockerfiles/tree/master/cuda/cuda_v7.0).
 To run an image with CUDA access, run (this is customized for our
 machines with three GPUs):
 
