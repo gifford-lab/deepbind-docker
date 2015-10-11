@@ -23,11 +23,8 @@ EC2 ones, by running:
 
 Prerequisites are Docker and having the NVIDIA 346.46 driver installed
 (the default for CUDA 7.0; see the upstream image documentation).  The
-`dockerfiles` directory contains images that change the CUDA version
-and should allow compatibility with a wider range of driver backends.
-They are also set up as automated builds with tags specifying the CUDA
-and driver version, including `7.5`, `7.0`, and `6.5` (see
-[here](https://hub.docker.com/r/giffordlab/deepbind-docker/tags/)).
+tag for the source image can be used to change the CUDA version and
+NVIDIA driver version.
 
 ### Using the image
 
