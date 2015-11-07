@@ -9,7 +9,7 @@ RUN curl -sS https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.s
 RUN chmod a+x /root/miniconda.sh
 RUN /root/miniconda.sh -b
 ENV PATH /root/miniconda/bin:$PATH
-RUN conda install scipy numpy matplotlib pil # matplotlib=1.3.1 downgrades everything
+RUN conda install scipy numpy matplotlib=1.3.1 pil # matplotlib=1.3.1 downgrades everything
 
 # Bring DeepBind source code into the image.
 COPY code/libs /root/deepbind/libs
