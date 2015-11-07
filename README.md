@@ -22,11 +22,13 @@ EC2 ones, by running:
     docker pull giffordlab/deepbind-docker
 
 Prerequisites are Docker and having the NVIDIA 346.46 driver installed
-(the default for CUDA 7.0; see the upstream image documentation).  The
-tag for the source image can be used to change the CUDA version and
-NVIDIA driver version.
+(the default for CUDA 7.0; see the upstream image documentation).  
+
+To run it on Amazon EC2, the AMI ami-763a311e is recommended. And we suggest using our [EC2-launcher-pro](https://github.com/gifford-lab/ec2-launcher-pro) for fast and convenient deployment of docker jobs on EC2.
 
 ### Using the image
+
+##### Run the example data
 
 The image is based on this [CUDA
 image](https://github.com/Kaixhin/dockerfiles/tree/master/cuda/cuda_v7.0).
@@ -39,20 +41,42 @@ machines with three GPUs):
     --device /dev/nvidia0 \
     --device /dev/nvidia1 \
     --device /dev/nvidia2 \
-    giffordlab/deepbind-docker
+    giffordlab/deepbind-docker yourcommand
 
-This will launch the ENCODE example script referred to in their documentation.
+`yourcommand` is the bash command you would normally run to launch DeepBind without Docker.  Refer to the original [README](https://github.com/gifford-lab/deepbind-docker/blob/master/README.TXT) for details. For full options, checkout [here](https://github.com/gifford-lab/deepbind-docker/blob/master/code/deepbind_util.py#L452-L463).
 
-### Notes
+Without any `yourcommand`, it will launch the ENCODE example script referred to in their documentation.
 
-The DeepBind pipeline currently has a nest of hardcoded paths for
-loading data, but we will clean this up soon and add examples for
-analyzing custom files with the container.
+##### Specify input and output directory
 
-You can override the default `CMD` and then start other commands
-manually:
+We modified the code to make the input and output path configurable: 
 
-    docker run -it --rm $NVIDIA_OPTS giffordlab/deepbind-docker /bin/bash
+(this example is for machine with one GPU)
+
+```
+docker run -v INDIR:/indata -v OUTDIR:/outdata -i --rm \
+--device /dev/nvidiactl \
+--device /dev/nvidia-uvm \
+--device /dev/nvidia0 \
+giffordlab/deepbind-docker python deepbind_train_encode.py all train,test,report \
+-i /indata -o /outdata
+```
+
+`INDIR`: The absolute path of input directory (like $THIS_REPO$/data/encode/).
+
+`OUTDIR`: The absolute path of output directory  
+
+
+
+### Customized changes comparing to original DeepBind
+
++ We made the input and output directory configurable. (commit [1906d4](https://github.com/gifford-lab/deepbind-docker/commit/1906d4bbe83ad14a57ddb5f649ca1b7b32780510))
+
++ We add a configurable "fast" mode for more room of customization. (same commit as above)
+
++ We made the code runnable with different GPU architectures, including the ones used by Amazon EC2 GPU instance type. (commit [5cac2f9](5cac2f99c44dff7f4e155c892e67315698ebcf61))
+
+
 
 ### License
 
