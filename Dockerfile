@@ -8,7 +8,7 @@ RUN apt-get install -y emacs24-nox nano curl
 RUN curl -sS https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh > /root/miniconda.sh
 RUN chmod a+x /root/miniconda.sh
 RUN /root/miniconda.sh -b
-ENV PATH /root/miniconda/bin:$PATH
+ENV PATH /root/miniconda2/bin:$PATH
 RUN conda install scipy numpy matplotlib=1.3.1 pil # matplotlib=1.3.1 downgrades everything
 
 # Bring DeepBind source code into the image.
